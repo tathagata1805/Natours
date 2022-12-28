@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 
 // MODULE IMPORTS
 const tourRouter = require('./routes/tourRoutes');
@@ -23,6 +24,11 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // GLOBAL MIDDLEWARES:-
+
+// ACCESS-CONTROL-ALLOW-ORIGIN (IMPLEMENT CORS)
+app.use(cors());
+app.options('*', cors());
+app.enable('trust proxy');
 
 // SERVING STATIC TEMPLATE FILES
 app.use(express.static(path.join(__dirname, 'public')));
