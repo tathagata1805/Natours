@@ -100,10 +100,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
     return next(
-      new AppError(
-        'The user belonging to this token no longer exist.',
-        401
-      )
+      new AppError('The user belonging to this token no longer exist.', 401)
     );
   }
 
@@ -118,6 +115,37 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+// ONLY FOR RENDERED PAGES, NO ERRORS!
+exports.isLoggedIn = async (req, res, next) => {
+  if (req.cookies.jwt) {
+    try {
+      // 1) VERIFY TOKEN
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
+
+      // 2) CHECK IF USER STILL EXISTS
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) {
+        return next();
+      }
+
+      // 3) CHECK IF USER CHANGED PASSWORD AFTER THE TOKEN HAS BEEN ISSUED
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+
+      // THERE IS A LOGGED IN USER
+      res.locals.user = currentUser;
+      return next();
+    } catch (err) {
+      return next();
+    }
+  }
+  next();
+};
 
 // 2) ROLE BASED AUTHORIZATION
 exports.restrictTo = (...roles) => {

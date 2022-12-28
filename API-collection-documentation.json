@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "460e30fe-57f6-4d86-8515-611a5a134b96",
     "name": "Natours",
-    "description": "The Natours APi contains endpoints for Tours, Users, and Reviews.",
+    "description": "The Natours API contains endpoints for Tours, Users, and Reviews.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
