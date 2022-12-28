@@ -4,7 +4,7 @@ const authController = require('./../controllers/authController');
 
 // MIDDLEWARES FOR PROTECTING ROUTES AND ROLE BASED AUTHORIZATION
 router.use(authController.protect);
-router.use(authController.restrictTo);
+router.use(authController.restrictTo('admin', 'lead-guide'));
 
 // USER SPECIFIC ROUTES
 router

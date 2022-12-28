@@ -44,6 +44,7 @@ const createSendToken = (user, statusCode, res) => {
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
+    role: req.body.role,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
@@ -72,9 +73,6 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 // HANDLER FUNCTIONS FOR THE FOLLOWING FEATURES:-
-
-// 1) PROTECTING ROUTES
-// 2) ROLE BASED AUTHORIZATION
 
 // 1) PROTECTING ROUTES
 exports.protect = catchAsync(async (req, res, next) => {

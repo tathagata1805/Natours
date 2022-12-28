@@ -3,8 +3,16 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-// CONTROLLER FUNCTION TO GET THE OVERVIEW PAGE TO VIEW ALL TOURS
+// CONTROLLER FUNCTION TO GET ALERTS
+exports.alert = (req, res, next) => {
+  const { alert } = req.query;
+  if (alert === 'booking')
+    res.locals.alert =
+      'Your booking was successful. Please check your email for confirmation.';
+  next();
+};
 
+// CONTROLLER FUNCTION TO GET THE OVERVIEW PAGE TO VIEW ALL TOURS
 exports.getOverview = catchAsync(async (req, res, next) => {
   // 1) GET ALL TOUR DATA FROM COLLECTION
   const tours = await Tour.find();
