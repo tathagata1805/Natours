@@ -10,6 +10,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 // MODULE IMPORTS
 const tourRouter = require('./routes/tourRoutes');
@@ -30,11 +31,29 @@ app.use(cors());
 app.options('*', cors());
 app.enable('trust proxy');
 
+// BODY PARSER, READING DATA FROM CLIENT REQUEST BODY
+app.use(express.json({ limit: '10kb' }));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
 // SERVING STATIC TEMPLATE FILES
 app.use(express.static(path.join(__dirname, 'public')));
 
 // SET SECURITY HTTP HEADERS
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: {
+      allowOrigins: ['*'],
+    },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ['*'],
+        scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"],
+      },
+    },
+  })
+);
 
 // SETTING ENVIRONMENT-> DEVELOPMENT || PRODUCTION
 console.log(process.env.NODE_ENV);
@@ -50,10 +69,6 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
-
-// BODY PARSER, READING DATA FROM CLIENT REQUEST BODY
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // DATA SANITIZATION AGANIST NOSQL QUERY INJECTION
 app.use(mongoSanitize());
@@ -74,6 +89,12 @@ app.use(
     ],
   })
 );
+
+// COOKIE PARSING MIDDLEWARE
+app.use((req, res, next) => {
+  console.log(req.cookies);
+  next();
+});
 
 // ROUTING MIDDLEWARES
 
