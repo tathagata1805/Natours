@@ -29,13 +29,16 @@ if (loginForm)
 // MANIPULATING LOGOUT BUTTON
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
-// MANIPULATING USER DATA FORM FOR USER DATA UPDATE FEATURE
+// MANIPULATING USER DATA (INCLUDING USER PROFILE PICTURE) FORM FOR USER DATA UPDATE FEATURE
 if (userDataForm)
   userDataForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    updateSettings({ name, email }, 'data');
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+
+    updateSettings(form, 'data');
   });
 
 // MANIPULATING USER PASSWORD FORM FOR USER PASSWORD UPDATE FEATURE
