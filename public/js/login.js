@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { showAlert } from './alert';
 
+// LOGIN FEATURE HANDLER
 export const login = async (email, password) => {
   try {
     const res = await axios({
@@ -27,6 +28,7 @@ export const login = async (email, password) => {
   }
 };
 
+// LOGOUT FEATURE HANDLER
 export const logout = async () => {
   try {
     const res = await axios({

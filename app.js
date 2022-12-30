@@ -39,7 +39,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 // SERVING STATIC TEMPLATE FILES
 app.use(express.static(path.join(__dirname, 'public')));
 
-// SET SECURITY HTTP HEADERS
+// SET SECURITY HTTP HEADERS (IMPLEMENTING OBJECTS TO CONFIGURE MAPBOX)
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
@@ -92,7 +92,6 @@ app.use(
 
 // COOKIE PARSING MIDDLEWARE
 app.use((req, res, next) => {
-  console.log(req.cookies);
   next();
 });
 

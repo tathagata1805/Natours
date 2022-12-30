@@ -1,5 +1,6 @@
 /* eslint-disable */
 
+// CONFIGURING MAPBOX
 export const displayMap = (locations) => {
   mapboxgl.accessToken =
     'pk.eyJ1IjoidGF0aGFnYXRhMTgwNSIsImEiOiJja3N2eXhkMDMxdWxuMnduMWxzc3JicnRrIn0.bdK-p33bBGeU0INC655enw';
@@ -7,9 +8,6 @@ export const displayMap = (locations) => {
     container: 'map', // CONTAINER ID
     style: 'mapbox://styles/tathagata1805/clc8ox90y008314p3as9acoq6', // STYLE URL (MADE USING MAPBOX STUDIO)
     scrollZoom: false,
-    //   center: [-118.113491, 34.111745],
-    //   zoom: 10,
-    //   interactive: false,
   });
 
   const bounds = new mapboxgl.LngLatBounds();
@@ -31,6 +29,7 @@ export const displayMap = (locations) => {
     new mapboxgl.Popup({
       offset: 30,
     })
+      // ADDING POINT NAMES IN THE MARKER
       .setLngLat(loc.coordinates)
       .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
       .addTo(map);
