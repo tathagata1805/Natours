@@ -7,7 +7,7 @@ export const updateData = async (name, email) => {
   try {
     const res = await axios({
       method: 'PATCH',
-      url: 'http://localhost:3000/api/v1/users/updateMe',
+      url: 'http://localhost:8000/api/v1/users/updateMe',
       data: {
         name,
         email,
@@ -15,7 +15,7 @@ export const updateData = async (name, email) => {
     });
 
     if (res.data.status === 'success') {
-      showAlert('success', `${type.toUpperCase()} Updated Successfully!`);
+      showAlert('success', 'Data Updated Successfully!');
     }
   } catch (err) {
     showAlert('error', err.response.data.message);

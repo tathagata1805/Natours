@@ -70,6 +70,7 @@ exports.getAccount = catchAsync(async (req, res, next) => {
 
 // CONTROLLER FUNCTION TO HANDLE USER UPDATE
 exports.updateUserData = catchAsync(async (req, res, next) => {
+  console.log('Update', req.body);
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,
     {
