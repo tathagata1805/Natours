@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-const sendEmail = require('./../utils/email');
+const Email = require('./../utils/email');
 
 // CREATE JWT TOKEN SIGNATURE WITH THREE PARAMETERS:-
 //* 1) ID OF THE USER, 2) SECRET CODE 3) CALLBACK FOR EMBEDDING EXPIRY IN THE SIGNATURE *//
@@ -49,6 +49,13 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
+
+  // SENDING WELCOME MAIL TO THE USER
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  console.log(url);
+
+  // MAIL CONSTRUCTOR
+  await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, res);
 });
@@ -196,11 +203,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   // SENDING EMAIL TO THE USER FEATURE -> USING NODEMAILER
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 min)',
-      message,
-    });
+    // await sendEmail({
+    //   email: user.email,
+    //   subject: 'Your password reset token (valid for 10 min)',
+    //   message,
+    // });
 
     res.status(200).json({
       status: 'success',
