@@ -47,12 +47,7 @@ app.use(
     crossOriginResourcePolicy: {
       allowOrigins: ['*'],
     },
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ['*'],
-        scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"],
-      },
-    },
+    contentSecurityPolicy: false,
   })
 );
 

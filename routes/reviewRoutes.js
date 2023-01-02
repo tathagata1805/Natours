@@ -1,6 +1,7 @@
 const express = require('express');
 const reviewController = require('./../controllers/reviewController');
 const authController = require('./../controllers/authController');
+const bookingController = require('./../controllers/bookingController');
 
 // IMPLEMENTING MERGE PARAMETERS TO PROVIDE REVIEW ROUTES TO TOUR ROUTES
 const router = express.Router({ mergeParams: true });
@@ -15,6 +16,7 @@ router
   .post(
     authController.restrictTo('user'),
     reviewController.setTourUserIds,
+    bookingController.checkIfBooked,
     reviewController.createReview
   );
 

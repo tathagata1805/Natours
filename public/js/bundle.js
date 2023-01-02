@@ -12193,8 +12193,8 @@ var bookTour = /*#__PURE__*/function () {
         case 10:
           _context.prev = 10;
           _context.t0 = _context["catch"](0);
-          console.log(err);
-          (0, _alert.showAlert)('error', err);
+          console.log(_context.t0);
+          (0, _alert.showAlert)('error', _context.t0);
         case 14:
         case "end":
           return _context.stop();
@@ -12450,7 +12450,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64033" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58663" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
