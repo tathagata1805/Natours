@@ -6,7 +6,7 @@ export const displayMap = (locations) => {
     'pk.eyJ1IjoidGF0aGFnYXRhMTgwNSIsImEiOiJja3N2eXhkMDMxdWxuMnduMWxzc3JicnRrIn0.bdK-p33bBGeU0INC655enw';
   const map = new mapboxgl.Map({
     container: 'map', // CONTAINER ID
-    style: 'mapbox://styles/tathagata1805/clc8ox90y008314p3as9acoq6', // STYLE URL (MADE USING MAPBOX STUDIO)
+    style: 'mapbox://styles/mapbox/light-v10', // STYLE URL
     scrollZoom: false,
   });
 

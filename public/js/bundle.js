@@ -12063,8 +12063,8 @@ var displayMap = function displayMap(locations) {
   var map = new mapboxgl.Map({
     container: 'map',
     // CONTAINER ID
-    style: 'mapbox://styles/tathagata1805/clc8ox90y008314p3as9acoq6',
-    // STYLE URL (MADE USING MAPBOX STUDIO)
+    style: 'mapbox://styles/mapbox/light-v10',
+    // STYLE URL
     scrollZoom: false
   });
   var bounds = new mapboxgl.LngLatBounds();
