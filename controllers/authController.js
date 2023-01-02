@@ -191,23 +191,16 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  // 3) SEND IT TO THE USER'S EMAIL
+  // 3) SEND IT TO THE USER'S EMAIL ->
 
-  // -> CREATING TOKEN RESET URL FOR SENDING IT TO THE USER
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetPassword/${resetToken}`;
-
-  // -> MESSAGE TO BE SENT TO THE USER VIA MAIL
-  const message = `Forgot your password? Click this link and enter your new password and confirm password: ${resetURL}.`;
-
-  // SENDING EMAIL TO THE USER FEATURE -> USING NODEMAILER
+  // SENDING PASSWORD RESET EMAIL TO THE USER
   try {
-    // await sendEmail({
-    //   email: user.email,
-    //   subject: 'Your password reset token (valid for 10 min)',
-    //   message,
-    // });
+    // PASSWORD RESET URL (SENT TO THE USER)
+    const resetURL = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/resetPassword/${resetToken}`;
+
+    await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
