@@ -1,6 +1,7 @@
 const Tour = require('../models/tourModel');
 const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
+const Review = require('../models/reviewModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -109,5 +110,15 @@ exports.updateUserData = catchAsync(async (req, res, next) => {
   res.status(200).render('account', {
     title: 'Your Account',
     user: updatedUser,
+  });
+});
+
+exports.getMyReviews = catchAsync(async (req, res) => {
+  const reviews = await Review.find({ user: req.user.id })
+    .select('-user')
+    .populate('tour');
+  res.status(200).render('review', {
+    title: 'My Reviews',
+    reviews,
   });
 });

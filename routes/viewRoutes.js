@@ -28,6 +28,8 @@ router.get('/login', authController.isLoggedIn, viewsController.getLoginForm); /
 router.get('/me', authController.protect, viewsController.getAccount); // GETING USER PAGE ROUTE
 router.get('/my-tours', authController.protect, viewsController.getMyTours); // GETING USER SPECIFIC TOURS
 
+router.get('/my-reviews', authController.protect, viewsController.getMyReviews);
+
 // USER DATA UPDATE ROUTE
 router.post(
   '/submit-user-data',
