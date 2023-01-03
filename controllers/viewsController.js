@@ -63,6 +63,13 @@ exports.getLoginForm = catchAsync(async (req, res, next) => {
   });
 });
 
+// GET THE SIGNUP FORM TEMPLATE
+exports.getSignUpForm = (req, res) => {
+  res.status(200).render('signUp', {
+    title: 'Create a new account',
+  });
+};
+
 // GET THE USER ACCOUNT PAGE TEMPLATE
 exports.getAccount = catchAsync(async (req, res, next) => {
   res.status(200).render('account', {

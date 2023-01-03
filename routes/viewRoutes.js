@@ -5,12 +5,21 @@ const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
 
+router.use(viewsController.alert);
+
 // HOMEPAGE ROUTE
 router.get(
   '/',
   bookingController.createBookingCheckout,
   authController.isLoggedIn,
   viewsController.getOverview
+);
+
+router.get(
+  '/signup',
+  authController.isLoggedIn,
+  viewsController.getSignUpForm,
+  authController.signup
 );
 
 // INDIVIDUA CONTENT PAGE ROUTE
