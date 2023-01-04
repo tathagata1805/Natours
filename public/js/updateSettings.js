@@ -19,6 +19,9 @@ export const updateSettings = async (data, type) => {
     // SENDING ALERT BASED ON THE CHANGE OF "DATA" OR "PASSWORD"
     if (res.data.status === 'success') {
       showAlert('success', `${type.toUpperCase()} updated Successfully`);
+      window.setTimeout(() => {
+        location.assign('/me');
+      }, 1000);
     }
   } catch (err) {
     showAlert('error', err.response.data.message);

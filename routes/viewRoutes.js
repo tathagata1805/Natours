@@ -30,6 +30,12 @@ router.get('/my-tours', authController.protect, viewsController.getMyTours); // 
 
 router.get('/my-reviews', authController.protect, viewsController.getMyReviews);
 
+router.get(
+  '/my-favorites',
+  authController.protect,
+  viewsController.getFavorites
+);
+
 // USER DATA UPDATE ROUTE
 router.post(
   '/submit-user-data',

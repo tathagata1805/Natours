@@ -2,12 +2,14 @@ const express = require('express');
 const tourController = require('./../controllers/tourController');
 const authController = require('./../controllers/authController');
 const reviewRouter = require('./../routes/reviewRoutes');
+const bookingRouter = require('./../routes/bookingRoutes');
 
 const router = express.Router();
 
-// IMPLEMENTING NESTED ROUTING FOR CREATING TOUR SPECIFIC REVIEWS
+// router.param('id', tourController.checkID);
 
 router.use('/:tourId/reviews', reviewRouter);
+router.use('/:tourId/bookings', bookingRouter);
 
 router
   .route('/top-5-cheap')
@@ -30,14 +32,12 @@ router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
 
 router
   .route('/')
-  .get(authController.protect, tourController.getAllTours)
+  .get(tourController.getAllTours)
   .post(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.createTour
   );
-
-// RESTRICT THESE ROUTES FOR SPECIFIC ROLES
 
 router
   .route('/:id')
@@ -45,13 +45,13 @@ router
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
     tourController.updateTour
   )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
-    tourController.uploadTourImages,
-    tourController.resizeTourImages,
     tourController.deleteTour
   );
 

@@ -1,18 +1,18 @@
 const express = require('express');
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
+const bookingRouter = require('../routes/bookingRoutes');
 
 const router = express.Router();
 
-// USER CENTRIC ROUTES...
+router.use('/:userId/bookings', bookingRouter);
 
 router.post('/signup', authController.signup);
+router.get('/verifyEmail/:token', authController.verifyEmail);
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
-
-// PROTECT ALL ROUTES AFTER THIS MIDDLEWARE
 
 router.use(authController.protect);
 
@@ -26,7 +26,12 @@ router.patch(
 );
 router.delete('/deleteMe', userController.deleteMe);
 
-// PROTECT ROUTES AFTER THIS MIDDLEWARE-> ONLY ADMINS CAN USE THESE FEATURES...
+router.get('/favorite', userController.favorites);
+
+router
+  .route('/favorite/:tourId')
+  .post(userController.addFavorite)
+  .delete(userController.removeFavorite);
 
 router.use(authController.restrictTo('admin'));
 

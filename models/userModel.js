@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Please provide your email'],
+    required: [true, 'Please provide your mail'],
     unique: true,
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valid email'],
@@ -33,9 +33,7 @@ const userSchema = new mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, 'Please confirm your password'],
-    // CUSTOM VALIDATION FOR PASSWORD CONFIRM FEATURE
     validate: {
-      // THIS ONLY WORKS ON "create" AND "save"
       validator: function (el) {
         return el === this.password;
       },
@@ -45,21 +43,30 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  verifyEmailToken: String,
+  verifyEmailTokenExpires: Date,
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
   active: {
     type: Boolean,
     default: true,
     select: false,
   },
+  favorite: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Tour',
+    },
+  ],
 });
 
 userSchema.pre('save', async function (next) {
-  // ONLY RUNS THIS FUNCTION IF THE PASSWORD WAS ACTUALLY MODIFIED
   if (!this.isModified('password')) return next();
 
-  // HASH THE PASSWORD
   this.password = await bcrypt.hash(this.password, 12);
 
-  // DELETE "passwordConfirm" FIELD
   this.passwordConfirm = undefined;
   next();
 });
@@ -72,12 +79,15 @@ userSchema.pre('save', function (next) {
 });
 
 userSchema.pre(/^find/, function (next) {
-  // "this" POINTS TO THE CURRENT QUERY
   this.find({ active: { $ne: false } });
   next();
 });
 
-// PASSWORD MATCHING AND VALIDATION METHOD
+userSchema.pre(/^find/, function (next) {
+  this.populate('favorite');
+  next();
+});
+
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
@@ -91,27 +101,32 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
       this.passwordChangedAt.getTime() / 1000,
       10
     );
-
     return JWTTimestamp < changedTimestamp;
   }
-
-  // False means NOT changed
+  //False means not changed
   return false;
 };
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
-
   this.passwordResetToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
 
-  console.log({ resetToken }, this.passwordResetToken);
+  // console.log({ resetToken }, this.passwordResetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
+};
+
+userSchema.methods.addFavorite = function (tourId) {
+  this.favorite.push(tourId);
+};
+
+userSchema.methods.removeFavorite = function (tourId) {
+  this.favorite.pull(tourId);
 };
 
 const User = mongoose.model('User', userSchema);

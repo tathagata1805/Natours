@@ -122,3 +122,11 @@ exports.getMyReviews = catchAsync(async (req, res) => {
     reviews,
   });
 });
+
+exports.getFavorites = catchAsync(async (req, res, next) => {
+  const favoriteTours = await User.findById(req.user.id).select('favorite');
+  res.status(200).render('overview', {
+    title: 'My Favorites',
+    tours: favoriteTours.favorite,
+  });
+});

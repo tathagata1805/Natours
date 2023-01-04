@@ -56,14 +56,18 @@ module.exports = class Email {
     // 3) CREATE A TRANSPORT AND SEND THE MAIL
     await this.newTransport().sendMail(mailOptions);
   }
+  async sendVerifyEmail() {
+    await this.send('verify', 'Verify Your Email');
+  }
+
   async sendWelcome() {
-    await this.send('welcome', 'Welcome to Natours');
+    await this.send('welcome', 'Welcome to the Natours Family!');
   }
 
   async sendPasswordReset() {
     await this.send(
       'passwordReset',
-      'Your Password Reset Token (valid for only 10 minutes)'
+      'Your password reset token (valid for only 10 minutes)'
     );
   }
 };
