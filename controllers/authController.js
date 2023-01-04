@@ -8,6 +8,7 @@ const Email = require('./../utils/email');
 
 // CREATE JWT TOKEN SIGNATURE WITH THREE PARAMETERS:-
 //* 1) ID OF THE USER, 2) SECRET CODE 3) CALLBACK FOR EMBEDDING EXPIRY IN THE SIGNATURE *//
+
 const signToken = (id) => {
   return jwt.sign(
     {
@@ -20,6 +21,7 @@ const signToken = (id) => {
   );
 };
 
+// FACTORY FUNCTION FOR SENDING TOKEN TO THE CLIENT AS COOKIES
 const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
 
@@ -31,6 +33,7 @@ const createSendToken = (user, statusCode, req, res) => {
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
   });
 
+  // REMOVE PASSWORD FROM API OUTPUT
   user.password = undefined;
 
   res.status(statusCode).json({
@@ -42,6 +45,7 @@ const createSendToken = (user, statusCode, req, res) => {
   });
 };
 
+// SINGUP USER
 exports.signup = catchAsync(async (req, res, next) => {
   const token = await crypto.randomBytes(32).toString('hex');
   const verifyEmailToken = await crypto
@@ -49,6 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     .update(token)
     .digest('hex');
 
+  // VERIFYING TOKEN BEFORE SENDING THE MAIL
   const verifyEmailTokenExpires = Date.now() + 10 * 60 * 1000;
   const newUser = await User.create({
     name: req.body.name,
@@ -60,25 +65,27 @@ exports.signup = catchAsync(async (req, res, next) => {
     verifyEmailTokenExpires,
   });
 
+  // SENDING WELCOME MAIL TO THE USER
   const url = `${req.protocol}://${req.get(
     'host'
   )}/api/v1/users/verifyEmail/${token}`;
-  // console.log(url);
+
   await new Email(newUser, url).sendVerifyEmail();
 
   res.status(201).json({
     status: 'success',
     data: {},
   });
-  // createSendToken(newUser, 201, req, res);
 });
 
+// FEATURE OF VERIFYING THE USER BEFORE LOGGING IN USING EMAIL
 exports.verifyEmail = catchAsync(async (req, res, next) => {
   const hashedToken = await crypto
     .createHash('sha256')
     .update(req.params.token)
     .digest('hex');
 
+  // CREATING NEW USER BASED ON TOKEN VERIFIED ABOVE..
   const newUser = await User.findOne({
     verifyEmailToken: hashedToken,
     verifyEmailTokenExpires: { $gt: Date.now() },
@@ -88,19 +95,19 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
     return next(new AppError('Token is invalid or has expired', 400));
   const url = `${req.protocol}://${req.get('host')}/me`;
 
+  // ONCE VERIFIED AND NO ERRORS, NEW USER CREATED AND WELCOME MAIL SENT
   newUser.emailVerified = true;
   newUser.verifyEmailToken = undefined;
   newUser.verifyEmailTokenExpires = undefined;
   await newUser.save({ validateBeforeSave: false });
   await new Email(newUser, url).sendWelcome();
-  // if (req.headers['user-agent'].includes('PostmanRuntime'))
-  //   return createSendToken(newUser, 201, req, res);
 
   res.status(201).render('verified', {
     title: 'Email verified Successfully',
   });
 });
 
+// LOGGING IN THE USER
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -114,6 +121,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password!', 401));
   }
 
+  // VERIFY MAIL
   if (!user.emailVerified) {
     return next(new AppError('Please First verify your email address!', 401));
   }
@@ -121,6 +129,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, req, res);
 });
 
+// PROTECTING ROUTES USING ROLE BASED AUTHORIZATION FEATURE
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
   if (
@@ -143,6 +152,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
+  // DECODING JWT TOKEN
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   const currentUser = await User.findById(decoded.id);
@@ -165,6 +175,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// CHECKING WHETHER USER IS LOGGED IN OR NOT (WON'T GENERATE ANY ERROR)
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
@@ -197,6 +208,7 @@ exports.isLoggedIn = async (req, res, next) => {
   next();
 };
 
+// HANDLER TO HANDLE LOGOUT
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 1000),
@@ -208,6 +220,7 @@ exports.logout = (req, res) => {
   });
 };
 
+// RESTRICTING ACCESS FEATURE
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -220,25 +233,30 @@ exports.restrictTo = (...roles) => {
   };
 };
 
+// FORGOT PASSWORD FEATURE FLOW
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     email: req.body.email,
   });
 
+  // CHECKING USER
   if (!user) {
     return next(new AppError('There is no user with that email address!', 404));
   }
 
+  // VERIFYING MAIL
   if (!user.emailVerified) {
     return next(new AppError('Please First verify your email address!', 401));
   }
 
+  // RESETTING TOKEN
   const resetToken = user.createPasswordResetToken();
 
   await user.save({
     validateBeforeSave: false,
   });
 
+  // SEDNING MAIL
   try {
     const resetURL = `${req.protocol}://${req.get(
       'host'
@@ -266,12 +284,14 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   });
 });
 
+// RESET PASSWORD
 exports.resetPassword = catchAsync(async (req, res, next) => {
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params.token)
     .digest('hex');
 
+  // NEW TOKEN FOR NEW PASSWORD
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: {
@@ -283,6 +303,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError('Token is invalid or has expired', 400));
   }
 
+  // SAVING USER WITH NEW TOKEN AND PASSWORD
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
@@ -292,6 +313,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, req, res);
 });
 
+// UPDATING PASSWORD
 exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id).select('+password');
 

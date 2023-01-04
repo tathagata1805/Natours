@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { showAlert } from './alert';
 
+// ADDING FAVORITE TOUR
 export const addFavorite = async (tourId, toggleBtn) => {
   try {
     const res = await axios({
@@ -18,6 +19,7 @@ export const addFavorite = async (tourId, toggleBtn) => {
   }
 };
 
+// REMOVING FAVORITE TOUR
 export const removeFavorite = async (tourId, toggleBtn) => {
   try {
     const res = await axios({

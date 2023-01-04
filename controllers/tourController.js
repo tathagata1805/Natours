@@ -19,6 +19,7 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
+// CONFIGURING UPLOAD
 const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
@@ -30,6 +31,7 @@ exports.uploadTourImages = upload.fields([
   { name: 'images', maxCount: 3 },
 ]);
 
+// RESIZING IMAGE FEATURE
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
   if (!req.files.imageCover || !req.files.images) return next();
 

@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please provide your mail'],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
+    validate: [validator.isEmail, 'Please provide a valid email'], //INBUILT VALIDATOR
   },
   photo: {
     type: String,
@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, 'Please confirm your password'],
+    // CUSTOM VALIDATION
     validate: {
       validator: function (el) {
         return el === this.password;
@@ -40,6 +41,7 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same!',
     },
   },
+  // VERIFICATION FEATURES
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
@@ -62,6 +64,9 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
+// PRE QUERY MIDDLEWARES
+
+// HASHING PASSWORD
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
@@ -71,6 +76,7 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+// SAVING THE TIME WHEN PASSWORD HAS BEEN CHANGED
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
@@ -78,16 +84,19 @@ userSchema.pre('save', function (next) {
   next();
 });
 
+// FINDING ACTIVE USER
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });
 
+// ADDING FAVORITES (VIRTUAL POPULATE)
 userSchema.pre(/^find/, function (next) {
   this.populate('favorite');
   next();
 });
 
+// COMPARING SAVED AND ENTERED PASSWORD TO LOGIN
 userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
@@ -95,6 +104,9 @@ userSchema.methods.correctPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+// METHODS TO SET PASSWORD CHANGING TOKEN.'
+
+// 1) CHECKING WHETHER PASSWORD IS CHANGED AFTER CREATING JWT TOKEN
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
@@ -103,10 +115,10 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     );
     return JWTTimestamp < changedTimestamp;
   }
-  //False means not changed
   return false;
 };
 
+// 2) IF NO, UPDATE PASSWORD, HASH IT AND CREATE TOKEN
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
   this.passwordResetToken = crypto
@@ -114,17 +126,18 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest('hex');
 
-  // console.log({ resetToken }, this.passwordResetToken);
-
+  // 3) SETTING WHEN THE TOKEN SHALL EXPIRE
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
 };
 
+// ADDING FAVORITE TOUR FOR A USER (REFERENCING TO TOUR)
 userSchema.methods.addFavorite = function (tourId) {
   this.favorite.push(tourId);
 };
 
+// REMOVING FAVORITE
 userSchema.methods.removeFavorite = function (tourId) {
   this.favorite.pull(tourId);
 };

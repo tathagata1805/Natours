@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { showAlert } from './alert';
 
+// FEATURE FOR HANDLING SUBMIT REVIEW
 export const submitReview = async (rating, review, tourId) => {
   try {
     const res = await axios({
@@ -26,6 +27,7 @@ export const submitReview = async (rating, review, tourId) => {
   }
 };
 
+// HANDLING UPDATE REVIEW FEATURE
 export const updateReview = async (reviewId, rating, review) => {
   // return console.log(data)
   try {
@@ -48,6 +50,7 @@ export const updateReview = async (reviewId, rating, review) => {
   }
 };
 
+// HANDLING DELETE REVIEW FEATURE
 export const deleteReview = async (reviewId) => {
   try {
     const res = await axios({

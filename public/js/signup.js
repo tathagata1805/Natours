@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { showAlert } from './alert';
 
+// SCRIPT TO HANDLE SIGNUP FUNCTION
 export const signup = async (name, email, password, passwordConfirm) => {
   console.log(signup);
   try {

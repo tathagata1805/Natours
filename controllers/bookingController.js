@@ -42,6 +42,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
+// CREATING BOOKING CHECKOUT FUNCTION
 exports.createBookingCheckout = catchAsync(async (req, res, next) => {
   const { tour, user, price } = req.query;
 
@@ -51,6 +52,7 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
   res.redirect(req.originalUrl.split('?')[0]);
 });
 
+// CHECK IF THE USER HAS PURCHASED THE TOUR BEFORE ALLOWING IT TO WRITE A REVIEW
 exports.checkIfBooked = catchAsync(async (req, res, next) => {
   // 1) TO CHECK IF THE TOUR WAS BOOKED BY THE USER WHO WANTS TO REVIEW IT
   const booking = await Booking.find({

@@ -9,6 +9,7 @@ import { bookTour } from './stripe';
 import { showAlert } from './alert';
 import { addFavorite, removeFavorite } from './favorite';
 
+// GRABBING DOM ELEMENTS
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
 const signupForm = document.querySelector('.form--signup');
@@ -22,11 +23,13 @@ const favBtn = document.getElementById('favorite');
 
 const reviewPage = document.getElementById('review__page');
 
+// SCRIPT FOR HANDLING MAPBOX
 if (mapBox) {
   const locations = JSON.parse(mapBox.dataset.locations);
   displayMap(locations);
 }
 
+// SCRIPT FOR HANDLING LOGIN FEATURE
 if (loginForm) {
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -37,8 +40,10 @@ if (loginForm) {
   });
 }
 
+// SCRIPT FOR HANDLING LOGOUT FEATURE
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
+// SCRIPT FOR HANDLING USER DATA UPDATE FEATURE
 if (userDataForm) {
   userDataForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -51,6 +56,7 @@ if (userDataForm) {
   });
 }
 
+// SCRIPT FOR HANDLING USER PASSWORD FEATURE
 if (userPasswordForm) {
   userPasswordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -62,6 +68,8 @@ if (userPasswordForm) {
       { passwordCurrent, password, passwordConfirm },
       'password'
     );
+
+    // MANIPULATING BUTTONS
     document.querySelector('.btn--save-password').textContent = 'Save password';
     document.getElementById('password-current').value = '';
     document.getElementById('password').value = '';
@@ -69,6 +77,7 @@ if (userPasswordForm) {
   });
 }
 
+// SCRIPT FOR HANDLING TOUR BOOKING FEATURE
 if (bookBtn) {
   bookBtn.addEventListener('click', (e) => {
     e.target.textContent = 'Processing...';
@@ -77,10 +86,12 @@ if (bookBtn) {
   });
 }
 
+// SCRIPT FOR HANDLING ALERTS
 const alertMessage = document.querySelector('body').dataset.alert;
 
 if (alertMessage) showAlert('success', alertMessage, 20);
 
+// SCRIPT FOR HANDLING SIGNUP FEATURE
 if (signupForm) {
   signupForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -92,6 +103,7 @@ if (signupForm) {
   });
 }
 
+// SCRIPT FOR HANDLING REVIEW FEATURE
 if (reviewForm) {
   reviewForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -133,6 +145,7 @@ if (reviewPage) {
   });
 }
 
+// SCRIPT FOR HANDLING FAVORITE
 if (favBtn) {
   favBtn.addEventListener('click', (e) => {
     const vector = document.getElementById('Vector');
