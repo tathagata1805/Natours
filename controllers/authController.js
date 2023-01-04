@@ -6,6 +6,8 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const Email = require('./../utils/email');
 
+// CREATE JWT TOKEN SIGNATURE WITH THREE PARAMETERS:-
+//* 1) ID OF THE USER, 2) SECRET CODE 3) CALLBACK FOR EMBEDDING EXPIRY IN THE SIGNATURE *//
 const signToken = (id) => {
   return jwt.sign(
     {
