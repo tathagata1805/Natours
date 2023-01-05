@@ -41,6 +41,14 @@ exports.getTour = catchAsync(async (req, res, next) => {
     return next(new AppError('There is no tour with that name.', 404));
   }
 
+  if (res.locals.user) {
+    const bookings = await Booking.find({
+      user: res.locals.user.id,
+      tour: tour.id,
+    });
+    res.locals.isBookedTour = bookings.length > 0;
+  }
+
   // 2) BUILD THE TEMPLATE (IN THE TEMPLATE FILE)
 
   // 3) RENDER TEMPLATE USING DATA

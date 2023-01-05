@@ -56,7 +56,7 @@ exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 exports.checkIfBooked = catchAsync(async (req, res, next) => {
   // 1) TO CHECK IF THE TOUR WAS BOOKED BY THE USER WHO WANTS TO REVIEW IT
   const booking = await Booking.find({
-    user: req.uuser.id,
+    user: req.user.id,
     tour: req.body.tour,
   });
 

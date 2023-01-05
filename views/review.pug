@@ -25,7 +25,7 @@ block content
                                             option(value=`${value}`)= value
                             .form__group.ma-bt-md#review__section
                                 label.form__label(for='review') Review
-                                textarea#review.form__input(type='text' maxlength="100"  required disabled)= `${review.review}`
+                                textarea#review.form__input(type='text' maxlength="100" rows="5" cols="50" required disabled)= `${review.review}`
                     .card__footer
                         button.btn-delete.btn.btn--red.btn--small(data-review-id=`${review._id}`) remove
                         button.btn-update.btn.btn--green.btn--small(data-review-id=`${review._id}`) Update
